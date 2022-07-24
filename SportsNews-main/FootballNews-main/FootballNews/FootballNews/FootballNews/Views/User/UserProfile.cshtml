@@ -1,0 +1,162 @@
+﻿@using Microsoft.AspNetCore.Http
+@using Newtonsoft.Json;
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile</title>
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+    <style>
+        body {
+            background: #d8302f;
+        }
+
+        .form-control:focus {
+            box-shadow: none;
+            border-color: #e63e3e;
+        }
+
+        .profile-button {
+            background: #d8302f;
+            box-shadow: none;
+            border: none;
+        }
+
+            .profile-button:hover {
+                background: #e63e3e;
+            }
+
+            .profile-button:focus {
+                background: #e63e3e;
+                box-shadow: none;
+            }
+
+            .profile-button:active {
+                background: #e63e3e;
+                box-shadow: none;
+            }
+
+        .back:hover {
+            color: #e63e3e;
+            cursor: pointer;
+        }
+
+        .labels {
+            font-size: 20px;
+            margin: 20px 0;
+        }
+
+        .text-right {
+            font-size: 30px;
+        }
+
+        .add-experience:hover {
+            background: #e63e3e;
+            color: #fff;
+            cursor: pointer;
+            border: solid 1px #e63e3e;
+        }
+
+        .alert {
+            padding: 10px;
+            background-color: #fff;
+            color: #e63e3e;
+            margin-top: 10px;
+        }
+
+        .closebtn {
+            margin-left: 15px;
+            color: #e63e3e;
+            font-weight: bold;
+            float: right;
+            font-size: 22px;
+            line-height: 20px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+            .closebtn:hover {
+                color: #e63e3e;
+            }
+    </style>
+</head>
+
+<body>
+    <div class="container rounded bg-white mt-5 mb-5">
+        @{
+            User CurrentUser = JsonConvert.DeserializeObject<User>(Context.Session.GetString("CurrentUser"));
+        }
+        <form action="userProfile" method="post">
+            <div class="row">
+                <div class="col-md-4 border-right">
+                    <div class="d-flex flex-column align-items-center text-center p-3 py-5">
+                        @if (@CurrentUser.Avatar == null)
+                        {
+                            <img class="rounded-circle mt-5"
+                             src="~/images/avatar/2120b058cb9946e36306778243eadae5.jpg" width="150px;" height="270px;">
+                        }
+                        else
+                        {
+                            <img class="rounded-circle mt-5"
+                             src="~/images/avatar/@CurrentUser.Avatar" width="150px;" height="270px;">
+                        }
+                        <span class="font-weight-bold">Email:</span><span class="text-black-50">@CurrentUser.Email</span><span>
+                        </span>
+                    </div>
+                </div>
+                <div class="col-md-8 border-right">
+                    <div class="p-3 py-5">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h4 class="text-right">Profile Settings</h4>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-md-12">
+                                <label class="labels">Avatar</label>
+                                <input type="hidden" class="form-control" placeholder="Enter Avatar" value="@CurrentUser.Avatar" name="Avatar">
+                                <input type="file" class="form-control" placeholder="Enter Avatar" name="AvatarU">
+                            </div>
+                            @if (ViewBag.Error != null)
+                            {
+                                <div class="col-md-12 alert">
+                                    <span class="closebtn" onclick="this.parentElement.style.display = 'none';">&times;</span>
+                                    @ViewBag.Error
+                                </div>
+                            }
+                            <div class="col-md-12">
+                                <label class="labels">UserName</label><input type="text"
+                                                                             class="form-control" placeholder="Enter UserName" value="@CurrentUser.UserName" name="Username" required>
+                            </div>
+                        </div>
+                        <div class="mt-4 mb-4" style="float: left;">
+                            <button class="btn btn-primary profile-button1"
+                                    type="button">
+                                <a style="text-decoration: none; color: #fff;" href="/Home/Index">
+                                    Back To
+                                    Home
+                                </a>
+                            </button>
+                        </div>
+                        <div class="mt-4 mb-4" style="float: right;">
+                            <button class="btn btn-success profile-button2"
+                                    type="submit">
+                                Save Changes
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</body>
+
+</html>
