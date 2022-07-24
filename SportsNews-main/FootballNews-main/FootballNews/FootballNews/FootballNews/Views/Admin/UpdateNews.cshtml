@@ -1,0 +1,148 @@
+﻿@using Microsoft.AspNetCore.Http
+@using Newtonsoft.Json;
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>Update News</title>
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background-color: #d8302f;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        .form-add {
+            width: 50%;
+            margin: 0 auto;
+        }
+
+            .form-add h3 {
+                text-align: center;
+                font-size: 40px;
+                color: #fff;
+            }
+
+        input[type=text], [type=date],
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            margin-top: 6px;
+            margin-bottom: 16px;
+            resize: vertical;
+        }
+
+        input[type=submit] {
+            background-color: #0275d8;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+            input[type=submit]:hover {
+                background-color: #1977c9;
+            }
+
+        input[type=button] {
+            background-color: #d8302f;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+            input[type=button]:hover {
+                background-color: #bd3535;
+            }
+
+        .container {
+            border-radius: 5px;
+            background-color: #f2f2f2;
+            padding: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    @{
+        User CurrentUser = JsonConvert.DeserializeObject<User>(Context.Session.GetString("CurrentUser"));
+    }
+    <div class="form-add">
+        <h3>Update News</h3>
+
+        <div class="container">
+            <form action="updateNews" method="POST">
+                <label for="">NewsId</label>
+                <input value="@ViewData["NewsId"]" type="text" name="NewsId" placeholder="Enter id.." readonly>
+
+                <label for="">Title</label>
+                <input value="@ViewData["Title"]" type="text" name="Title" placeholder="Enter title.." required>
+
+                <label for="">Short Description</label>
+                <textarea name="ShortDescription" placeholder="Write something.." style="height:100px" required>@ViewData["ShortDescription"]</textarea>
+
+                <label for="">Thumbnail</label><br><br>
+                @*<img src="~/images/news/@ViewData["Thumbnail"]" alt="" width="200px" height="100px">*@
+                <input value="@ViewData["Thumbnail"]" type="text" name="Thumbnail" placeholder="Enter url img.." readonly>
+                <input type="file" name="ThumbnailU" placeholder="Enter url img.."><br><br>
+                
+                <label for="">Type News</label>
+                <select name="Category">
+                    @foreach (Category c in ViewBag.AllCategories)
+                   {
+                       <option selected='@((int)ViewData["CategoryId"]==c.CategoryId?"selected":null)' value="@c.CategoryId">@c.CategoryName</option>
+                   }
+                </select>
+
+                @*<label for="">Date Published</label>
+                <input value="@ViewData["DatePublished"]" type="datetime-local" name="DatePublished" placeholder="Enter date published.." required><br><br>*@
+
+                @foreach (Image i in ViewBag.GetImages)
+               {
+                    <input value="@i.ImageId" type="hidden" name="ImageId" placeholder="Enter id.." readonly>
+
+                    <label for="">Image</label><br><br>
+                    <input value="@ViewData["Thumbnail"]" type="text" name="ImageUrl" placeholder="Enter url img.." readonly>
+                    @*<img src="~/images/news/@i.ImageUrl" alt="" width="200px" height="100px"><br>*@
+                    <input type="file" name="ImageUrlU" placeholder="Enter url img.."><br><br>
+
+                    @foreach (Content c in ViewBag.GetContents)
+                   {
+                       if (i.ImageId == c.ImageId)
+                        {
+                            <label for="">Content</label>
+                            <textarea name="Content" placeholder="Write something.." style="height:100px" required>@c.Content1</textarea>
+                        }
+                   }
+                }
+                
+                @if (CurrentUser.RoleId == 1)
+                {
+                    <a href="/Admin/ManageNews"><input type="button" value="Cancel" style="float: left;"></a>
+                    <input type="submit" value="Update News" style="float: right;">
+                }
+                 @if (CurrentUser.RoleId == 2)
+                {
+                    <a href="/Author/MyNews"><input type="button" value="Cancel" style="float: left;"></a>
+                    <input type="submit" value="Update News" style="float: right;">
+                }
+
+                <div style="clear: both;">
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
+

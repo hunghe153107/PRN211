@@ -1,0 +1,186 @@
+﻿@using Microsoft.AspNetCore.Http
+@using Newtonsoft.Json;
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>Add News</title>
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background-color: #d8302f;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        .form-add {
+            width: 50%;
+            margin: 0 auto;
+        }
+
+            .form-add h3 {
+                text-align: center;
+                font-size: 40px;
+                color: #fff;
+            }
+
+        input[type=text], [type=date],
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            margin-top: 6px;
+            margin-bottom: 16px;
+            resize: vertical;
+        }
+
+        input[type=submit] {
+            background-color: #0275d8;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+            input[type=submit]:hover {
+                background-color: #1977c9;
+            }
+
+        input[type=button] {
+            background-color: #d8302f;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+            input[type=button]:hover {
+                background-color: #bd3535;
+            }
+
+        .container {
+            border-radius: 5px;
+            background-color: #f2f2f2;
+            padding: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    @{
+        User CurrentUser = JsonConvert.DeserializeObject<User>(Context.Session.GetString("CurrentUser"));
+    }
+    <div class="form-add">
+        <h3>Add News</h3>
+
+        <div class="container">
+            <form action="addNews" method="POST">
+                <label for="">Title</label>
+                <input type="text" name="Title" placeholder="Enter title.." required>
+
+                <label for="">Short Description</label>
+                <textarea name="ShortDescription" placeholder="Write something.." style="height:100px" required></textarea>
+
+                <label for="">Thumbnail</label><br><br>
+                <input type="file" name="Thumbnail" placeholder="Enter url img.." required><br><br>
+
+                <label for="">Type News</label>
+                <select name="Category">
+                    @foreach (Category c in ViewBag.AllCategories)
+                    {
+                        <option value="@c.CategoryId">@c.CategoryName</option>
+                    }
+                </select>
+
+                <input id="addMore" type="button" value="Add More Image/Content" style="background-color: #5cb85c;"><br><br>
+
+                <div id="below">
+                    <label for="">Image</label><br><br>
+                    <input type="file" name="Image" placeholder="Enter url img.." required><br><br>
+
+                    <label for="">Content</label>
+                    <textarea name="Content" placeholder="Write something.." style="height:100px" required></textarea>
+                </div>
+
+                @if (CurrentUser.RoleId == 1)
+                {
+                    <a href="/Admin/ManageNews"><input type="button" value="Cancel" style="float: left;"></a>
+                    <input type="submit" value="Add News" style="float: right;">
+                }
+                @if (CurrentUser.RoleId == 2)
+                {
+                    <a href="/Author/MyNews"><input type="button" value="Cancel" style="float: left;"></a>
+                    <input type="submit" value="Add News" style="float: right;">
+                }
+
+                <div style="clear: both;">
+                </div>
+            </form>
+        </div>
+    </div>
+
+</body>
+<script>
+    var add = document.getElementById('addMore');
+    var count = 1;
+    add.addEventListener("click", addMore);
+    function addMore() {
+        var below = document.getElementById('below');
+
+        var div = document.createElement('div');
+        div.id = "below";
+        insertAfter(div, below);
+
+        var label1 = document.createElement('label');
+        label1.innerHTML = "Image";
+        div.appendChild(label1);
+
+        var br1 = document.createElement('br');
+        insertAfter(br1, label1);
+        var br2 = document.createElement('br');
+        insertAfter(br2, br1);
+
+        var inputFile = document.createElement('input');
+        inputFile.type = "file";
+        inputFile.name = "Image";
+        inputFile.placeholder = "Enter url img..";
+        inputFile.required = true;
+        insertAfter(inputFile, br2);
+
+        var textarea = document.createElement('textarea');
+        textarea.id = "below";
+        textarea.name = "Content";
+        textarea.placeholder = "Write something..";
+        textarea.style = "height: 100px";
+        textarea.required = true;
+        insertAfter(textarea, inputFile);
+
+        var deleteBtn = document.createElement('input');
+        deleteBtn.onclick = function () {
+            this.parentElement.remove(this);
+        };
+        deleteBtn.id = "delete";
+        deleteBtn.type = "button";
+        deleteBtn.value = "Remove";
+        deleteBtn.style.margin = "20px 0";
+        insertAfter(deleteBtn, textarea);
+
+        count++;
+    }
+
+
+
+    function insertAfter(newNode, existingNode) {
+        existingNode.parentNode.insertBefore(newNode, existingNode.nextSibling);
+    }
+</script>
+</html>
+

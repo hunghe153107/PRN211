@@ -1,0 +1,318 @@
+﻿@using Microsoft.AspNetCore.Http
+@using Newtonsoft.Json;
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Basic -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!-- Mobile Metas -->
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <!-- Site Metas -->
+    <title>Contact</title>
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <!-- Site Icons -->
+    <link rel="shortcut icon" href="" type="image/x-icon" />
+    <link rel="apple-touch-icon" href="">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="~/css/bootstrap.min.css">
+    <!-- Site CSS -->
+    <link rel="stylesheet" href="~/style.css">
+    <!-- Colors CSS -->
+    <link rel="stylesheet" href="~/css/colors.css">
+    <!-- ALL VERSION CSS -->
+    <link rel="stylesheet" href="~/css/versions.css">
+    <!-- Responsive CSS -->
+    <link rel="stylesheet" href="~/css/responsive.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="~/css/custom.css">
+    <!-- font family -->
+    <link href="https://fonts.googleapis.com/css?family=Poppins:100,100i,200,200i,300,300i,400,400i,500,500i,600,600i,700,700i,800,800i,900,900i"
+          rel="stylesheet">
+
+    <!-- end font family -->
+    <link rel="stylesheet" href="~/css/3dslider.css" />
+    <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+
+    <link href="http://www.jqueryscript.net/css/jquerysctipttop.css" rel="stylesheet" type="text/css">
+    <script src="~/js/3dslider.js"></script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+
+<body class="game_info" data-spy="scroll" data-target=".header">
+    <!-- LOADER -->
+    <div id="preloader">
+        <img class="preloader" src="~/images/loading-img.gif" alt="">
+    </div>
+    <!-- END LOADER -->
+    <section id="top">
+        <header>
+            <div class="container">
+                <div class="header-top">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="right_top_section">
+                                <!-- social icon -->
+                                <ul class="social-icons pull-left">
+                                    <li><a class="facebook" href="#"><i class="fa fa-facebook"></i></a></li>
+                                    <li><a class="twitter" href="#"><i class="fa fa-twitter"></i></a></li>
+                                    <li><a class="instagram" href="#"><i class="fa fa-instagram"></i></a></li>
+                                    <li><a class="youtube" href="#"><i class="fa fa-youtube-play"></i></a></li>
+                                </ul>
+                                <!-- end social icon -->
+                                <!-- button section -->
+                                @if (Context.Session.GetString("CurrentUser") == null)
+                                {
+                                    <ul class="login">
+                                        <li class="login-modal">
+                                            <a href="/User/Login" class="login"><i class="fa fa-user"></i>Đăng Nhập</a>
+                                        </li>
+                                        <li>
+                                            <div class="cart-option">
+                                                <a href="/User/Register"><i class="fa fa-registered"></i>Đăng Kí</a>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                }
+                                else
+                                {
+                                    User CurrentUser = JsonConvert.DeserializeObject<User>(Context.Session.GetString("CurrentUser"));
+                                    <ul class="nav navbar-nav">
+                                        <li class="dropdown">
+                                            <a href="" class="dropdown-toggle" data-toggle="dropdown" style="color: #d8302f;">
+                                                Xin Chào ! @CurrentUser.UserName <span class="caret"></span>
+                                            </a>
+                                            <ul class="dropdown-menu dropdown-item" style="height: auto;">
+                                                <li class="col-sm-12">
+                                                    <ul class="menu-inner">
+                                                        <li><a href="/User/UserProfile">Hồ Sơ</a></li>
+                                                        <li><a href="/User/ChangeNewPassword">Đổi Mật Khẩu</a></li>
+                                                        @if (CurrentUser.RoleId == 1)
+                                                        {
+                                                            <li><a href="/Admin/ManageUser">Quản Lý</a></li>
+                                                        }
+                                                        @if (CurrentUser.RoleId == 2)
+                                                        {
+                                                            <li><a href="/Author/MyNews">Bài Viết Của Tôi</a></li>
+                                                        }
+                                                        <li><a href="/User/Logout">Đăng Xuất</a></li>
+                                                    </ul>
+                                                </li>
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                }
+                                <!-- end button section -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="header-bottom">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="full">
+                                <div class="main-menu-section">
+                                    <div class="menu">
+                                        <nav class="navbar navbar-inverse">
+                                            <div class="navbar-header">
+                                                <button class="navbar-toggle" type="button" data-toggle="collapse"
+                                                        data-target=".js-navbar-collapse">
+                                                    <span class="sr-only">Toggle navigation</span>
+                                                    <span class="icon-bar"></span>
+                                                    <span class="icon-bar"></span>
+                                                    <span class="icon-bar"></span>
+                                                </button>
+                                                <a class="navbar-brand" href="#">Menu</a>
+                                            </div>
+                                            <div class="collapse navbar-collapse js-navbar-collapse">
+                                                <ul class="nav navbar-nav">
+                                                    <li class="active"><a href="/Home/Index">Trang Chủ</a></li>
+                                                    @foreach (Category c in ViewBag.Top4Categories)
+                                                    {
+                                                        <li><a href="/News/NewsList/@c.CategoryId">@c.CategoryName</a></li>
+                                                    }
+                                                    <li class="dropdown">
+                                                        <a href="" class="dropdown-toggle" data-toggle="dropdown">
+                                                            Xem Thêm<span class="caret"></span>
+                                                        </a>
+                                                        <ul class="dropdown-menu dropdown-item" style="width: 200px;height: auto;">
+                                                            <li class="col-sm-12">
+                                                                <ul class="menu-inner">
+                                                                    @foreach (Category c in ViewBag.AllOtherCategories)
+                                                                    {
+                                                                        <li><a href="/News/NewsList/@c.CategoryId">@c.CategoryName</a></li>
+                                                                    }
+                                                                </ul>
+                                                            </li>
+                                                        </ul>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                            <!-- /.nav-collapse -->
+                                        </nav>
+                                        <form action="/News/searchNews" method="get">
+                                            <div class="search-bar">
+                                                <div id="imaginary_container">
+                                                    <div class="input-group stylish-input-group">
+                                                        <input type="text" class="form-control" name="NewsValue" placeholder="Search" required>
+                                                        <span class="input-group-addon">
+                                                            <button type="submit"><i class="fa fa-search" aria-hidden="true"></i></button>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <div class="inner-page-banner">
+            <div class="container">
+            </div>
+        </div>
+        <div class="inner-information-text">
+            <div class="container">
+                <h3>Liên Lạc</h3>
+                <ul class="breadcrumb">
+                    <li><a href="/Home/Contact">Trang Chủ</a></li>
+                    <li class="active">Liên Lạc</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <section id="contant" class="contant main-heading team">
+        <div class="row">
+            <div class="container">
+                <div class="contact">
+                    <div class="col-md-12">
+                        <div class="map">
+                            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3503.580671926123!2d77.31096031514461!3d28.582351982437654!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390cfcad59dc9d0b%3A0xe4060212422c0b9a!2sLeopedia+Web+Solutions!5e0!3m2!1sen!2sin!4v1511962485065" width="600" height="450" frameborder="0" style="border:0" allowfullscreen></iframe>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="contact-info">
+                            <div class="kode-section-title">
+                                <h3>Contact Info</h3>
+                            </div>
+                            <div class="kode-forminfo">
+                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam aliquip..</p>
+                                <ul class="kode-form-list">
+                                    <li>
+                                        <i class="fa fa-home"></i>
+                                        <p><strong>Address:</strong> 805 consectetur adipiscing elit, sed do eiusmod tempor</p>
+                                    </li>
+                                    <li>
+                                        <i class="fa fa-phone"></i>
+                                        <p><strong>Phone:</strong>  0866131638</p>
+                                    </li>
+                                    <li>
+                                        <i class="fa fa-envelope-o"></i>
+                                        <p><strong>Email:</strong> datnthe153704@fpt.edu.vn</p>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="contact-us">
+                            <form method="post" class="comments-form" id="contactform">
+                                <ul>
+                                    <li><input type="text" id="name" name="Name" class="required" placeholder="Name *"></li>
+                                    <li><input type="text" id="email" name="Email" class="required email" placeholder="Email *"></li>
+                                    <li><input type="text" name="Address" id="Address" placeholder="Address:"></li>
+                                    <li><textarea name="Message" id="message" placeholder="Add your message"></textarea></li>
+                                    <li><input class="thbg-color" type="submit" value="send"></li>
+                                </ul>
+                                <div class="hidden-me" id="contact_form_responce">
+                                    <p></p>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer id="footer" class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="full">
+                        <div class="footer-widget">
+                            <div class="footer-logo">
+                                <a href="/Home/Index"><img src="~/images/footer-logo.png" alt="#" /></a>
+                            </div>
+                            <p>
+                                Most of our events have hard and easy route choices as we are always keen to encourage new
+                                riders.
+                            </p>
+                            <ul class="social-icons style-4 pull-left">
+                                <li><a class="facebook" href="#"><i class="fa fa-facebook"></i></a></li>
+                                <li><a class="twitter" href="#"><i class="fa fa-twitter"></i></a></li>
+                                <li><a class="instagram" href="#"><i class="fa fa-instagram"></i></a></li>
+                                <li><a class="youtube" href="#"><i class="fa fa-youtube-play"></i></a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="full">
+                        <div class="footer-widget">
+                            <h3>Menu</h3>
+                            <ul class="footer-menu">
+                                <li><a href="/Home/Index">Trang Chủ</a></li>
+                                <li><a href="/Home/About">Giới Thiệu</a></li>
+                                <li><a href="/Home/Contact">Liên Lạc</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="full">
+                        <div class="footer-widget">
+                            <h3>Liên Lạc</h3>
+                            <ul class="address-list">
+                                <li><i class="fa fa-map-marker"></i> Lorem Ipsum is simply dummy text of the printing..</li>
+                                <li><i class="fa fa-phone"></i> 0866131638</li>
+                                <li><i style="font-size:20px;top:5px;" class="fa fa-envelope"></i> datnthe153704@fpt.edu.vn</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="full">
+                        <div class="contact-footer">
+                            <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d120615.72236587871!2d73.07890527988283!3d19.140910987164396!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2sin!4v1527759905404"
+                                    width="600" height="350" frameborder="0" style="border:0" allowfullscreen></iframe>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <div class="container">
+                <p>Copyright © 2022 Distributed by <a href="https://themewagon.com/" target="_blank">ThemeWagon</a></p>
+            </div>
+        </div>
+    </footer>
+    <a href="" data-scroll class="dmtop global-radius"><i class="fa fa-angle-up"></i></a>
+    <!-- ALL JS FILES -->
+    <script src="~/js/all.js"></script>
+    <!-- ALL PLUGINS -->
+    <script src="~/js/custom.js"></script>
+</body>
+
+</html>
+
+
+

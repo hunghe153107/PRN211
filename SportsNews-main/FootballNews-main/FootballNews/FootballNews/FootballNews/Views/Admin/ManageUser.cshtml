@@ -1,0 +1,329 @@
+﻿@using Microsoft.AspNetCore.Http
+@using Newtonsoft.Json;
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Manage User</title>
+    <link rel="stylesheet"
+          href="https://maxst.icons8.com/vue-static/landings/line-awesome/line-awesome/1.3.0/css/line-awesome.min.css" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous" />
+    <script src="https://kit.fontawesome.com/64bb7a6643.js" crossorigin="anonymous"></script>
+
+    <link rel="stylesheet" href="~/css/admin.css" />
+</head>
+
+<body>
+    @{
+        User CurrentUser = JsonConvert.DeserializeObject<User>(Context.Session.GetString("CurrentUser"));
+    }
+    <div class="sidebar" style="background:#007bff">
+        <div class="form-input" style="float: left; margin: 20px 10px; width: 10%;">
+            <a href="/Home/Index"><span><i class="fa fa-arrow-circle-o-left" style="font-size: 25px; color: white;"></i></span><a href=""></a>
+        </div>
+        <div class="sidebar-brand" style="float: right; margin: 0px; width: 80%; padding-left: 0;">
+            <div class="user-wrapper">
+                @if (@CurrentUser.Avatar == null)
+                {
+                    <img src="~/images/avatar/2120b058cb9946e36306778243eadae5.jpg"
+                     width="40px" height="40px" alt="Error" />
+                }
+                else
+                {
+                    <img src="~/images/avatar/@CurrentUser.Avatar"
+                     width="40px" height="40px" alt="Error" />
+                }
+
+                <div>
+                    <h4 style="font-size: 20px;">@CurrentUser.UserName</h4>
+                </div>
+            </div>
+        </div>
+
+        <div class="sidebar-menu" style="clear: both;">
+            <ul>
+                <li>
+                    <a href="/Admin/ManageUser" class="active"><i class="fas fa-user-circle"></i><span>Manage User</span></a>
+                </li>
+                <li>
+                    <a href="/Admin/ManageNews"><i class="fas fa-book-open"></i><span>Manage News</span></a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="main-content">
+        <header>
+            <h2>
+                <label for="">
+                    <span class="las la-bars"></span>
+                </label>
+                Dashboard
+            </h2>
+            <form action="searchUser" method="post">
+                <div class="search-wrapper">
+                    <span class="class las la-search"></span>
+                    <input name="Value" type="search" placeholder="Search here" />
+                    <input type="submit" value="Search" />
+                </div>
+            </form>
+
+        </header>
+
+        <main>
+            <div class="cards">
+                <div class="card-single">
+                    <div>
+                        <h1>@ViewData["NumberAdmin"]</h1>
+                        <span>Admin</span>
+                    </div>
+                    <div>
+                        <span class="las la-users"></span>
+                    </div>
+                </div>
+                <div class="card-single">
+                    <div>
+                        <h1>@ViewData["NumberJournalist"]</h1>
+                        <span>Journalist</span>
+                    </div>
+                    <div>
+                        <span class="las la-users"></span>
+                    </div>
+                </div>
+                <div class="card-single">
+                    <div>
+                        <h1>@ViewData["NumberReader"]</h1>
+                        <span>Reader</span>
+                    </div>
+                    <div>
+                        <span class="las la-users"></span>
+                    </div>
+                </div>
+                <div class="card-single">
+                    <div>
+                        <h1>@ViewData["TotalUser"]</h1>
+                        <span>Total User</span>
+                    </div>
+                    <div>
+                        <span class="las la-users"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="container-fluid">
+                <h2 style="float: left; margin: 50px 0;" style="margin-top: 80px;">User Management</h2>
+                <button style="float: right; margin: 60px 0;" type="button" class="btn btn-success btn-add" data-toggle="modal"
+                        data-target="#exampleModal">
+                    Add New User
+                </button>
+                <table style="clear: both; " class="table table-striped table-bordered">
+                    <thead style="text-align: center;">
+                        <tr>
+                            <th scope="col">ID</th>
+                            <th scope="col">UserName</th>
+                            <th scope="col">Email</th>
+                            <th scope="col">Avatar</th>
+                            <th scope="col">Role</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Set Role</th>
+                            <th scope="col">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody style="text-align: center;">
+                        @foreach (User u in ViewBag.AllUsers)
+                        {
+                            <tr>
+                                <td>@u.UserId</td>
+                                <td>@u.UserName</td>
+                                <td>@u.Email</td>
+                                @if (@CurrentUser.Avatar == null)
+                                {
+                                    <td><img src="~/images/avatar/2120b058cb9946e36306778243eadae5.jpg" alt="" width="100px" height="100px"></td>
+                                }
+                                else
+                                {
+                                    <td><img src="~/images/avatar/@u.Avatar" alt="" width="100px" height="100px"></td>
+                                }
+                                @foreach (Role r in ViewBag.AllRoles)
+                                {
+                                    @if (r.RoleId == u.RoleId)
+                                    {
+                                        <td>@r.RoleName</td>
+                                    }
+                                }
+                                <td>@u.Status</td>
+                                <td>
+                                    <form action="SetRoleUser">
+                                        <select name="SetRole" onchange="this.form.submit()" id="exampleInputRole1">
+                                            @foreach (Role r in ViewBag.AllRoles)
+                                            {
+                                                <option selected="@(r.RoleId == u.RoleId?"selected":null)" value="@r.RoleId">@r.RoleName</option>
+                                            }
+                                        </select>
+                                        <input type="hidden" value="@u.UserId" name="UserId" />
+                                    </form>
+                                </td>
+                                @if (@u.RoleId != 1)
+                                { 
+                                    <td>
+                                        <a href="#" onclick="alert(@u.UserId, @u.RoleId)" class="btn btn-danger">Delete</a>
+                                    </td>
+                                }
+                                else
+                                {
+                                    <td>
+                                        <a href="/Admin/Error" class="btn btn-danger">Delete</a>
+                                    </td>
+                                }
+
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal Add -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Add New User</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form action="addUser" method="post">
+                        <style>
+                            .modal-body .alert {
+                                padding: 10px;
+                                background-color: #f44336;
+                                color: white;
+                                width: 100%;
+                                margin: 10px auto;
+                            }
+
+                            .modal-body .closebtn {
+                                margin-left: 15px;
+                                color: white;
+                                font-weight: bold;
+                                float: right;
+                                font-size: 22px;
+                                line-height: 20px;
+                                cursor: pointer;
+                                transition: 0.3s;
+                            }
+
+                                .modal-body .closebtn:hover {
+                                    color: black;
+                                }
+                        </style>
+                       
+                        <div class="form-group">
+                            <label for="exampleInputAvatar1">Avatar</label>
+                            <input type="file" name="Avatar" class="form-control" id="exampleInputAvatar1" placeholder="Enter Avatar" />
+                        </div>
+                        @if (ViewBag.Error1 != null)
+                        {
+                            <div class="alert">
+                                <span class="closebtn" onclick="this.parentElement.style.display = 'none';">&times;</span>
+                                @ViewBag.Error1
+                            </div>
+                             <input type="hidden" id="error1" value="@ViewBag.Error1" />
+                        }
+                        <div class="form-group">
+                            <label for="exampleInputName1">User Name</label>
+                            <input type="text" name="Username" class="form-control" id="exampleInputName1" placeholder="Enter User Name" required />
+
+                        </div>
+                        @if (ViewBag.Error2 != null)
+                        {
+                            <div class="alert">
+                                <span class="closebtn" onclick="this.parentElement.style.display = 'none';">&times;</span>
+                                @ViewBag.Error2
+                            </div>
+                            <input type="hidden" id="error2" value="@ViewBag.Error2" />
+                        }
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Email address</label>
+                            <input type="email" name="Email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
+                                   placeholder="Enter Email" required />
+                        </div>
+
+                        <div class="form-group">
+                            <label for="exampleInputPassword1">Password</label>
+                            <input type="password" name="Password" class="form-control" id="exampleInputPassword1" placeholder=" Enter Password" required />
+                        </div>
+
+                        <div class="form-group">
+                            <label for="exampleInputRole1">Role</label><br>
+                            <select name="Role" id="exampleInputRole1">
+                                @foreach (Role r in ViewBag.AllRoles)
+                                {
+                                    <option value="@r.RoleId" selected='@(r.RoleId==2)'>@r.RoleName</option>
+                                }
+                            </select>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                                Close
+                            </button>
+                            <button type="submit" class="btn btn-primary">Add</button>
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!--Script for modal active-->
+
+
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+            integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+            crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+            integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+            crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+            integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+            crossorigin="anonymous"></script>
+    <script>
+        $(document).ready(function() {
+            var error1 = $("#error1").val();
+            var error2 = $("#error2").val();
+            if (error1 != null || error2 != null) {
+                $("#exampleModal").modal('show');
+            }
+        });
+
+        $(".btn-add").click(function(){
+            $("#exampleModal").modal('show');
+        });
+        
+        function alert(UserId, RoleId) {
+            var check;
+            if (RoleId == 2) {
+                check = confirm('If you delete this user, all news written by him will also be deleted . Are you sure to delete ?');
+            } else {
+                check = confirm('Are you sure to delete ?');
+            }
+
+            if (check === true) {
+                window.location.href = '/Admin/DeleteUser?UserId=' + UserId;
+            }
+        }
+    </script>
+</body>
+
+
+</html>
